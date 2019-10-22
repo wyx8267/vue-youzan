@@ -4,7 +4,8 @@ import './category.css'
 import Vue from 'vue'
 import axios from 'axios'
 import url from 'js/api.js'
-import Foot from 'components/Foot.vue'
+// import Foot from 'components/Foot.vue'
+import mixin from 'js/mixin'
 
 new Vue({
     el: '#app',
@@ -13,20 +14,6 @@ new Vue({
         topIndex: 0,
         subData: null,
         rankData: null
-    },
-    components: {
-        Foot
-    },
-    filters: {
-        number(price) {
-            let priceStr = '' + price
-            if (priceStr.indexOf('.') > -1) {
-                let arr = priceStr.split('.')
-                return arr[0] + '.' + (arr[1] + '0').substr(0, 2)
-            } else {
-                return priceStr + '.00'
-            }
-        }
     },
     created() {
         this.getTopList()
@@ -52,6 +39,10 @@ new Vue({
             axios.get(url.rank).then(res => {
                 this.rankData = res.data.data
             })
+        },
+        toSearch(list) {
+            location.href = `search.html?keyword=${list.name}&id=${list.id}`
         }
-    }
+    },
+    mixins: [mixin]
 })
