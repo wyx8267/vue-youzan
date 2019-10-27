@@ -7,6 +7,8 @@ import axios from 'axios'
 import url from 'js/api.js'
 import mixin from 'js/mixin.js'
 import Velocity from 'velocity-animate'
+import Cart from 'js/cartService.js'
+import fetch from 'js/fetch.js'
 
 new Vue({
     el: '.container',
@@ -136,18 +138,24 @@ new Vue({
         },
         reduce(good) {
             if (good.number === 1) return
-            axios.post(url.cartReduce, {
-                id: good.id,
-                number: 1
-            }).then(res => {
+            // axios.post(url.cartReduce, {
+            //     id: good.id,
+            //     number: 1
+            // }).then(res => {
+            //     good.number--
+            // })
+            Cart.reduce(good.id).then(res => {
                 good.number--
             })
         },
         add(good) {
-            axios.post(url.cartAdd, {
-                id: good.id,
-                number: 1
-            }).then(res => {
+            // axios.post(url.cartAdd, {
+            //     id: good.id,
+            //     number: 1
+            // }).then(res => {
+            //     good.number++
+            // })
+            Cart.add(good.id).then(res => {
                 good.number++
             })
         },
@@ -163,7 +171,7 @@ new Vue({
         removeConfirm() {
             if (this.removeMsg === '确定删除该商品吗') {
                 let { shop, shopIndex, good, goodIndex } = this.removeData
-                axios.post(url.cartRemove, {
+                fetch(url.cartRemove, {
                     id: good.id
                 }).then(res => {
                     shop.goodsList.splice(goodIndex, 1)
@@ -221,7 +229,6 @@ new Vue({
             Velocity(this.$refs[`goods-${shopIndex}-${goodIndex}`], {
                 left
             })
-
         }
     },
     mixins: [mixin]
