@@ -29,13 +29,15 @@ new Vue({
         showSku: false,
         skuNum: 1,
         isAddCart: false,
-        showAddMessage: false
+        showAddMessage: false,
+        hotLists: null
     },
     components: {
         Swipe
     },
     created() {
         this.getDetails()
+        this.getHotLists()
     },
     methods: {
         getDetails() {
@@ -48,6 +50,14 @@ new Vue({
                         img: item
                     })
                 })
+            })
+        },
+        getHotLists(){
+            axios.get(url.hotLists, {
+                pageNum: 1,
+                pageSize: 6
+            }).then(res => {
+                this.hotLists = res.data.lists
             })
         },
         changeTab(index) {
