@@ -21,10 +21,12 @@ const routes = [
             },
             {
                 path: 'all',
+                name: 'all',
                 component: All
             },
             {
                 path: 'form',
+                name: 'form',
                 component: Form
             }
         ]
