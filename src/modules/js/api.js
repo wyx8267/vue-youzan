@@ -16,7 +16,7 @@ let url = {
     addressAdd: '/address/add',
     addressRemove: '/address/remove',
     addressUpdate: '/address/update',
-    addressSetDefault: 'address/setDefault'
+    addressSetDefault: '/address/setDefault'
 }
 
 let host = 'http://rap2api.taobao.org/app/mock/7058'

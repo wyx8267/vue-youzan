@@ -17,17 +17,16 @@
 </template>
 
 <script>
-import axios from "axios";
-import url from "js/api.js";
-
 export default {
-    data() {
-        return {
-            lists: null
-        };
-    },
     created() {
-        this.getLists();
+        if(!this.lists){
+            this.$store.dispatch('getLists')
+        }
+    },
+    computed:{
+        lists(){
+            return this.$store.state.lists
+        }
     },
     methods: {
         toEdit(list) {
@@ -38,11 +37,6 @@ export default {
                     instance: list
                 }
             })
-        },
-        getLists() {
-            axios.get(url.addressLists).then(res => {
-                this.lists = res.data.lists;
-            });
         }
     }
 };
