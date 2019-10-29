@@ -90,8 +90,8 @@
 </template>
 
 <script>
-import Address from "js/addressService.js"
-import { mapState } from 'vuex'
+import Address from "js/addressService.js";
+import { mapState } from "vuex";
 export default {
     data() {
         return {
@@ -100,6 +100,9 @@ export default {
             provinceValue: -1,
             cityValue: -1,
             districtValue: -1,
+            provinceName: "",
+            cityName: "",
+            districtName: "",
             address: "",
             id: "",
             type: "",
@@ -108,82 +111,155 @@ export default {
             cityList: null,
             districtList: null,
             isInitVal: false
-        }
+        };
     },
     created() {
-        let query = this.$route.query
-        this.type = query.type
-        this.instance = query.instance
+        let query = this.$route.query;
+        this.type = query.type;
+        this.instance = query.instance;
 
         if (this.type === "edit") {
-            let ad = this.instance
-            this.provinceValue = parseInt(ad.provinceValue)
-            this.name = ad.name
-            this.tel = ad.tel
-            this.address = ad.address
-            this.id = ad.id
+            let ad = this.instance;
+            this.provinceValue = parseInt(ad.provinceValue);
+            this.cityValue = parseInt(ad.cityValue);
+            this.districtValue = parseInt(ad.districtValue);
+            this.isInitVal = true;
+            this.name = ad.name;
+            this.tel = ad.tel;
+            this.address = ad.address;
+            this.id = ad.id;
+            this.isDefault = ad.isDefault;
+            this.provinceName = ad.provinceName;
+            this.cityName = ad.cityName;
+            this.districtName = ad.districtName;
         }
     },
     watch: {
         lists: {
-            handler(){
-                this.$router.go(-1)
+            handler() {
+                this.$router.go(-1);
             },
             deep: true
         },
         provinceValue(val) {
-            if (val === -1) return
+            if (val === -1) return;
             let index = this.addressData.list.findIndex(item => {
-                return item.value === val
-            })
-            this.cityList = this.addressData.list[index].children
-            this.cityValue = -1
-            this.districtValue = -1
+                return item.value === val;
+            });
+            this.provinceName = this.addressData.list[index].label;
+            this.cityList = this.addressData.list[index].children;
+            this.cityValue = -1;
+            this.districtValue = -1;
 
             if (this.type === "edit" && this.isInitVal) {
-                this.cityValue = parseInt(this.instance.cityValue)
+                this.cityValue = parseInt(this.instance.cityValue);
             }
         },
         cityValue(val) {
-            if (val === -1) return
-            let list = this.cityList
+            if (val === -1) return;
+            let list = this.cityList;
             let index = list.findIndex(item => {
-                return item.value === val
-            })
-            this.districtList = list[index].children
-            this.districtValue = -1
+                return item.value === val;
+            });
+            this.cityName = list[index].label;
+            this.districtList = list[index].children;
+            this.districtValue = -1;
 
             if (this.type === "edit" && this.isInitVal) {
-                this.districtValue = parseInt(this.instance.districtValue)
-                this.isInitVal = false
+                this.districtValue = parseInt(this.instance.districtValue);
+                this.isInitVal = false;
             }
+        },
+        districtValue(val) {
+            if (val === -1) return;
+            let list = this.districtList;
+            let index = list.findIndex(item => {
+                return item.value === val;
+            });
+            this.districtName = list[index].label;
         }
     },
-    computed:{
+    computed: {
         ...mapState({
             lists: state => state.lists
         })
     },
     methods: {
         add() {
-            //非空合法性校验待补
-            let { name, tel, provinceValue, cityValue, districtValue, address } = this
-            let data = { name, tel, provinceValue, cityValue, districtValue, address }
+            let {
+                name,
+                tel,
+                provinceValue,
+                cityValue,
+                districtValue,
+                address,
+                provinceName,
+                cityName,
+                districtName
+            } = this;
+            if (name.length === 0) {
+                alert("姓名为空!");
+                return;
+            }
+            if (tel.length === 0) {
+                alert("联系方式为空!");
+                return;
+            }
+            if (provinceValue && cityValue && districtValue === -1) {
+                alert("请选择地区!");
+                return;
+            }
+            if (address.length === 0) {
+                alert("详细地址未填写!");
+                return;
+            }
+            if (name.length != 0) {
+                let reg = /^[\u0391-\uFFE5]+$/;
+                if (!reg.test(name)) {
+                    alert("姓名填写错误,必须是汉字!");
+                    return;
+                }
+            }
+            if (tel.length != 0) {
+                let reg = /^\d{11}$/;
+                if (!reg.test(tel)) {
+                    alert("联系方式格式错误!");
+                    return;
+                }
+            }
+            if (address.length != 0) {
+                let reg = /^[\u0391-\uFFE5]{3,20}/;
+                if (!reg.test(address)) {
+                    alert("详细地址必须三个汉字以上!");
+                    return;
+                }
+            }
+            let data = {
+                name,
+                tel,
+                provinceValue,
+                cityValue,
+                districtValue,
+                address,
+                provinceName,
+                cityName,
+                districtName
+            };
             if (this.type === "edit") {
-                data.id = this.id
-                data.isDefault = this.isDefault
-                this.$store.dispatch('updateAction', data)
+                data.id = this.id;
+                data.isDefault = this.isDefault;
+                this.$store.dispatch("updateAction", data);
             } else {
-                this.$store.dispatch('addAction', data)
+                this.$store.dispatch("addAction", data);
             }
         },
         remove() {
             if (window.confirm("确认删除？")) {
-                this.$store.dispatch('removeAction', this.id)
+                this.$store.dispatch("removeAction", this.id);
             }
         },
         setDefault() {
-            this.$store.dispatch('setDefaultAction', this.id)
+            this.$store.dispatch("setDefaultAction", this.id);
         }
     }
 };
