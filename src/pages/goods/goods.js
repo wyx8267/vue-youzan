@@ -41,7 +41,7 @@ new Vue({
     },
     methods: {
         getDetails() {
-            axios.get(url.details, { id }).then(res => {
+            axios.post(url.details, { id }).then(res => {
                 this.details = res.data.data
                 this.bannerLists = []
                 this.details.imgs.forEach(item => {
@@ -53,7 +53,7 @@ new Vue({
             })
         },
         getHotLists(){
-            axios.get(url.hotLists, {
+            axios.post(url.hotLists, {
                 pageNum: 1,
                 pageSize: 6
             }).then(res => {
@@ -67,8 +67,10 @@ new Vue({
             }
         },
         getDeal() {
-            axios.get(url.deal, { id }).then(res => {
-                this.dealLists = res.data.data.lists
+            axios.post(url.deal, { id }).then(res => {
+                if (!this.dealLists) {
+                    this.dealLists = res.data.data.lists
+                }
             })
         },
         chooseSku(type) {
@@ -80,7 +82,7 @@ new Vue({
             this.skuNum += num
         },
         addCart() {
-            axios.post(url.addCart, {
+            axios.post(url.cartAdd, {
                 id,
                 number: this.skuNum
             }).then(res => {
@@ -99,8 +101,8 @@ new Vue({
         showSku(val, oldVal) {
             document.body.style.overflow = val ? 'hidden' : 'auto'
             document.querySelector('html').style.overflow = val ? 'hidden' : 'auto'
-            document.body.height.overflow = val ? '100%' : 'auto'
-            document.querySelector('html').height.overflow = val ? '100%' : 'auto'
+            document.body.style.height = val ? '100%' : 'auto'
+            document.querySelector('html').style.height = val ? '100%' : 'auto'
         }
     },
     mixins: [mixin]

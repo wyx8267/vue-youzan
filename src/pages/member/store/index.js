@@ -44,7 +44,7 @@ const store = new Vuex.Store({
     },
     actions: {
         getLists({ commit }) {
-            axios.get(url.addressLists).then(res => {
+            Address.list().then(res => {
                 commit('init', res.data.lists)
             })
         },
